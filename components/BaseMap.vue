@@ -1,6 +1,6 @@
 <template>
 	<section id="container__map">
-		<section id="mapContainer" ref="map" v-if="!error"></section>
+		<section id="mapContainer" ref="map"></section>
 	</section>
 </template>
 
@@ -29,6 +29,8 @@ export default {
 				attribution:
 					'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 			}).addTo(map.value);
+			map.value.panTo(L.latLng(props.lat, props.lng));
+			L.marker([props.lat, props.lng]).addTo(map.value);
 		};
 
 		onMounted(() => {
@@ -39,10 +41,21 @@ export default {
 				map.value.remove();
 			}
 		});
-		watch(props, () => {
-			map.value.panTo(L.latLng(props.lat, props.lng));
-			L.marker([props.lat, props.lng]).addTo(map.value);
-		})
+		// watch(props, () => {
+		// 	map.value.panTo(L.latLng(props.lat, props.lng));
+		// 	L.marker([props.lat, props.lng]).addTo(map.value);
+		// });
+
+		// if ("geolocation" in navigator) {
+		// 	/* geolocation is available */
+		// 	navigator.geolocation.getCurrentPosition((position) => {
+		// 		// doSomething(position.coords.latitude, position.coords.longitude);
+		// 		console.log(position.coords.latitude);
+		// 		console.log(position.coords.longitude);
+		// 	});
+		// } else {
+		// 	/* geolocation IS NOT available */
+		// }
 
 		return {
 			map,

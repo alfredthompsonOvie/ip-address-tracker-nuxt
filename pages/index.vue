@@ -5,25 +5,6 @@
 				<h1 class="heading">IP Address Tracker</h1>
 			</header>
 			<!-- form -->
-			<!-- <ClientOnly>
-				<form @submit="onSubmit" :class="{formErr: errors.search}">
-					<label for="search"></label>
-					<input
-						type="search"
-						id="search"
-						name="search"
-						placeholder="Search for any IP address or domain"
-						class="search"
-						:class="{error: errors.search}"
-						v-model.lazy="search"
-					/>
-					<p class="errMsg">{{ errors.search }}</p>
-
-					<button type="submit" class="submitBtn">
-						<img src="@/assets/icon-arrow.svg" alt="search button" />
-					</button>
-				</form>
-			</ClientOnly> -->
 			<form @submit="onSubmit" :class="{ formErr: errors.search }">
 				<label for="search"></label>
 				<input
@@ -85,6 +66,7 @@
 import { useField, useForm } from "vee-validate";
 import { object, string } from "yup";
 import BaseMap from "@/components/BaseMap.vue";
+// import { onMounted } from 'vue'
 
 const ip = ref("");
 const location = ref("");
@@ -95,9 +77,42 @@ const lat = ref(0);
 const lng = ref(0);
 const results = ref(null);
 
+// const getIp = async () => {
+// 	const res = await fetch('https://api.ipify.org?format=json')
+// 	const d = await res.json()
+// 	// return data.ip
+// 	const { data } = await useFetch(`/api/locate/${d.ip}`)
+	
+// 	ip.value = data.value.ip;
+// 	location.value = data.value.location.region;
+// 	city.value = data.value.location.city;
+// 	timezone.value = data.value.location.timezone;
+// 	isp.value = data.value.isp;
+// 	lat.value = data.value.location.lat;
+// 	lng.value = data.value.location.lng;
+// 	results.value = true;
+// }
+onBeforeMount(async () => {
+	const res = await fetch('https://api.ipify.org?format=json')
+	const d = await res.json()
+	// return data.ip
+	const { data } = await useFetch(`/api/locate/${d.ip}`)
+	
+	ip.value = data.value.ip;
+	location.value = data.value.location.region;
+	city.value = data.value.location.city;
+	timezone.value = data.value.location.timezone;
+	isp.value = data.value.isp;
+	lat.value = data.value.location.lat;
+	lng.value = data.value.location.lng;
+	results.value = true;
+})
+// onMounted(() => {
+// 	getIp()
+// })
 // const config = useRuntimeConfig();
 
-function is_domain(str) {
+function isDomain(str) {
 	// www.example.com
 	let re = /^(www)[\.](\w+[\.]?)+\w+[\.][a-z]{2,3}$/;
 	return re.test(str);
@@ -113,7 +128,7 @@ const schema = object({
 	search: string().test(
 		"isValidIPorDomain",
 		"must be a valid ip address or a domain www.example.com",
-		(value, context) => checkIp(value) || is_domain(value)
+		(value, context) => checkIp(value) || isDomain(value)
 	),
 });
 
