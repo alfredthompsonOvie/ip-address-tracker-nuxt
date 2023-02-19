@@ -124,7 +124,10 @@ footer {
 .attribution a {
 	color: hsl(228, 45%, 44%);
 } */
-
+.leaflet-control {
+	top: 6em;
+	left: 1em;
+}
 
 
 @media (min-width: 47.5em) {
@@ -165,6 +168,10 @@ footer {
   .container {
     grid-template-columns: 0.2fr 1.6fr 0.2fr;
   }
+	.leaflet-control {
+		top: 10px;
+		left: 10px;
+	}
 }
 @media (min-width: 68.75em) {
 	/* // 1100 */
@@ -176,4 +183,5 @@ footer {
   .container {
     grid-template-columns: 0.3fr 1.4fr 0.3fr;
   }
+
 }

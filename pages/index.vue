@@ -23,34 +23,16 @@
 				</button>
 			</form>
 			<!-- details -->
-			<section class="ip__details" v-if="results">
-				<section class="data">
-					<small>IP ADDRESS</small>
-					<p class="result__data ip__address">{{ ip }}</p>
-				</section>
-				<section class="data">
-					<small>LOCATION</small>
-					<p class="result__data location">
-						<span class="blockText location__code"
-							>{{ location }} - {{ city }}</span
-						>
-					</p>
-				</section>
-				<section class="data">
-					<small>TIMEZONE</small>
-					<p class="result__data timezone">
-						UTC
-						<span class="time">{{ timezone }}</span>
-					</p>
-				</section>
-				<section class="data">
-					<small>ISP</small>
-					<p class="result__data isp">
-						<span class="blockText isp__block1">{{ isp }}</span>
-						<span class="blockText isp__block2"></span>
-					</p>
-				</section>
-			</section>
+			<Transition name="slideDown" appear>
+				<IpDetails 
+				:ip="ip"
+				:location="location"
+				:isp="isp"
+				:timezone="timezone"
+				:city="city"
+				v-if="results"
+				/>
+			</Transition>
 		</section>
 		<section class="map">
 			<ClientOnly>
@@ -66,7 +48,7 @@
 import { useField, useForm } from "vee-validate";
 import { object, string } from "yup";
 import BaseMap from "@/components/BaseMap.vue";
-// import { onMounted } from 'vue'
+import IpDetails from "~~/components/IpDetails.vue";
 
 const ip = ref("");
 const location = ref("");
@@ -75,42 +57,28 @@ const timezone = ref("");
 const isp = ref("");
 const lat = ref(0);
 const lng = ref(0);
+
 const results = ref(null);
 
-// const getIp = async () => {
-// 	const res = await fetch('https://api.ipify.org?format=json')
-// 	const d = await res.json()
-// 	// return data.ip
-// 	const { data } = await useFetch(`/api/locate/${d.ip}`)
-	
-// 	ip.value = data.value.ip;
-// 	location.value = data.value.location.region;
-// 	city.value = data.value.location.city;
-// 	timezone.value = data.value.location.timezone;
-// 	isp.value = data.value.isp;
-// 	lat.value = data.value.location.lat;
-// 	lng.value = data.value.location.lng;
-// 	results.value = true;
-// }
 onBeforeMount(async () => {
-	const res = await fetch('https://api.ipify.org?format=json')
-	const d = await res.json()
-	// return data.ip
-	const { data } = await useFetch(`/api/locate/${d.ip}`)
-	
-	ip.value = data.value.ip;
-	location.value = data.value.location.region;
-	city.value = data.value.location.city;
-	timezone.value = data.value.location.timezone;
-	isp.value = data.value.isp;
-	lat.value = data.value.location.lat;
-	lng.value = data.value.location.lng;
-	results.value = true;
+	try {
+		// get device ip
+		const res = await fetch('https://api.ipify.org?format=json')
+		const d = await res.json()
+		const { data } = await useFetch(`/api/locate/${d.ip}`)
+		
+		ip.value = data.value.ip;
+		location.value = data.value.location.region;
+		city.value = data.value.location.city;
+		timezone.value = data.value.location.timezone;
+		isp.value = data.value.isp;
+		lat.value = data.value.location.lat;
+		lng.value = data.value.location.lng;
+		results.value = true;
+	} catch (err) {
+		console.log(err);
+	}
 })
-// onMounted(() => {
-// 	getIp()
-// })
-// const config = useRuntimeConfig();
 
 function isDomain(str) {
 	// www.example.com
@@ -174,5 +142,12 @@ input.error {
 	z-index: 99;
 	color: maroon;
 	font-style: italic;
+}
+
+.slideDown-enter-from, .slideDown-leave-to {
+	transform: translateY(-10px);
+}
+.slideDown-enter-active, .slideDown-leave-active {
+	transition: all .3s linear;
 }
 </style>

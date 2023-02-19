@@ -1,88 +1,49 @@
 <template>
 	<section id="container__map">
-		<section id="mapContainer" ref="map"></section>
+		<section id="mapID" class="mapContainer"></section>
 	</section>
 </template>
 
-<script>
-import "leaflet/dist/leaflet.css";
+<script setup>
 import L from "leaflet";
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
-export default {
-	name: "BaseMap",
-	props: {
-		lat: {
-			type: Number,
-			required: true,
-		},
-		lng: {
-			type: Number,
-			required: true,
-		},
+const props = defineProps({
+	lat: {
+		type: Number,
+		required: true,
 	},
-	setup(props) {
-		const map = ref(null);
-
-		const setupLeafletMap = () => {
-			map.value = L.map("mapContainer").setView([51.513, -0.09], 13);
-			L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
-				attribution:
-					'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-			}).addTo(map.value);
-			map.value.panTo(L.latLng(props.lat, props.lng));
-			L.marker([props.lat, props.lng]).addTo(map.value);
-		};
-
-		onMounted(() => {
-			setupLeafletMap();
-		});
-		onBeforeUnmount(() => {
-			if (map.value) {
-				map.value.remove();
-			}
-		});
-		// watch(props, () => {
-		// 	map.value.panTo(L.latLng(props.lat, props.lng));
-		// 	L.marker([props.lat, props.lng]).addTo(map.value);
-		// });
-
-		// if ("geolocation" in navigator) {
-		// 	/* geolocation is available */
-		// 	navigator.geolocation.getCurrentPosition((position) => {
-		// 		// doSomething(position.coords.latitude, position.coords.longitude);
-		// 		console.log(position.coords.latitude);
-		// 		console.log(position.coords.longitude);
-		// 	});
-		// } else {
-		// 	/* geolocation IS NOT available */
-		// }
-
-		return {
-			map,
-		};
+	lng: {
+		type: Number,
+		required: true,
 	},
-};
+});
+
+let map;
+onMounted(() => {
+	map = L.map("mapID").setView([51.513, -0.09], 13);
+	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+		maxZoom: 19,
+		attribution:
+			'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	}).addTo(map);
+	map.panTo(L.latLng(props.lat, props.lng));
+	L.marker([props.lat, props.lng]).addTo(map);
+});
+watch(props, () => {
+	map.panTo(L.latLng(props.lat, props.lng));
+	L.marker([props.lat, props.lng]).addTo(map);
+});
 </script>
 
 <style scoped>
 #container__map {
 	width: 100%;
 	height: 100%;
+	background-color: blue;
 }
-#mapContainer {
+.mapContainer {
+	/* background-color: red; */
 	width: 100%;
+	/* width: inherit; */
 	height: 100%;
 }
-/* .errorContainer {
-	height: inherit;
-	width: inherit;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.error {
-	font-style: italic;
-	color: red;
-	font-size: 1.2rem;
-} */
 </style>
