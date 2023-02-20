@@ -65,7 +65,10 @@ onBeforeMount(async () => {
 		// get device ip
 		const res = await fetch('https://api.ipify.org?format=json')
 		const d = await res.json()
+		console.log(d);
 		const { data } = await useFetch(`/api/locate/${d.ip}`)
+		console.log(data.value);
+
 		
 		ip.value = data.value.ip;
 		location.value = data.value.location.region;
