@@ -67,7 +67,8 @@ onBeforeMount(async () => {
 		const d = await res.json()
 		console.log(d);
 		const { data } = await useFetch(`/api/locate/${d.ip}`)
-		console.log(data.value);
+		console.log("data.value",data.value);
+		console.log("data",data);
 
 		
 		ip.value = data.value.ip;
